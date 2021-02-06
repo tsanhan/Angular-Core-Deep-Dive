@@ -1,51 +1,41 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, Inject, Injector, OnInit} from '@angular/core';
-import {Course} from './model/course';
-import {Observable} from 'rxjs';
-import {AppConfig, CONFIG_TOKEN} from './config';
+import {AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {COURSES} from '../db-data';
-import {CoursesService} from './courses/courses.service';
-import {createCustomElement} from '@angular/elements';
-import {CourseTitleComponent} from './course-title/course-title.component';
-
+import { CourseCardComponent } from './courses/course-card/course-card.component';
+import { HighlightedDirective } from './courses/directives/highlighted.directive';
+import {Course} from './model/course';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit {
 
-    courses: Course[] = COURSES;
+    courses = COURSES;
 
-    coursesTotal = this.courses.length;
 
-    constructor(
-        private coursesService: CoursesService,
-        @Inject(CONFIG_TOKEN) private config: AppConfig,
-        private injector: Injector) {
+    @ViewChildren(CourseCardComponent, {read: ElementRef})
+    cards : QueryList<ElementRef>;
 
-    }
+    // @ViewChild('hilighter') hilighter: HighlightedDirective
+    // in case of multiple custom directives applied to the same component, we can query them seperetly
+    @ViewChild(CourseCardComponent, {read: HighlightedDirective}) highlightedDirective: HighlightedDirective
 
-    ngOnInit() {
-
-        const htmlElement = createCustomElement(CourseTitleComponent, {injector:this.injector});
-
-        customElements.define('course-title', htmlElement);
+    constructor() {
 
     }
 
-    onEditCourse() {
-
-            this.courses[1].category = 'ADVANCED';
-
+    ngAfterViewInit() {
+      console.log('highlightedDirective',this.highlightedDirective)
     }
 
-    save(course: Course) {
-        this.coursesService.saveCourse(course)
-            .subscribe(
-                () => console.log('Course Saved!')
-            );
-    }
+    onToggle($event){
+      console.log("$event",$event);
 
+    }
+    onCourseSelected(course:Course) {
+      console.log(course);
+
+    }
 
 }
