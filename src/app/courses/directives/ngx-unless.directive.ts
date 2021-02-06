@@ -10,8 +10,6 @@ export class NgxUnlessDirective {
 
   constructor(private templateRef: TemplateRef<any>,
               private viewContainer: ViewContainerRef) {
-
-
   }
 
   @Input()
